@@ -1,3 +1,3 @@
-package fr.enova.smart.home.bean;
+package fr.enova.smart.home.bean.event;
 
 public class TemperatureEvent extends AbstractEvent<Double> {}

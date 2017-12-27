@@ -1,7 +1,9 @@
 package fr.enova.smart.home.configuration;
 
-import fr.enova.smart.home.bean.*;
+import fr.enova.smart.home.bean.event.PresenceEvent;
 import fr.enova.smart.home.exception.EventInstantiateException;
+import fr.enova.smart.home.service.EventFactory;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
@@ -28,59 +30,22 @@ public class SmartHomeRoute extends RouteBuilder {
                 .component("restlet").host("localhost")
                 .port(8888);
 
-        rest("/push")
+        rest("/push").description("Jeedom push API")
+                .consumes("application/json").produces("application/json")
                 .get("/sensorType/{sensorType}/commandId/{commandId}/humanCommand/{humanCommand}/value/{value}/room/{room}")
-                .to("direct:mapper");
+                .responseMessage().code(200).endResponseMessage()
+                .route()
+                .inOnly("seda:mapper")
+                .setBody(constant("OK"));
 
-        from("direct:mapper")
+
+        from("seda:mapper")
                 .routeId("mapper")
-                .choice()
-                .when(header("sensorType").contains(SensorTypeEnum.TEMPERATURE.getSensorType()))
-                    .process(exchange -> {
-                        Event<Double> event = EventFactory.getInstance()
-                                .buildEvent(exchange, TemperatureEvent.class, Double.class);
-                        exchange.getIn().setBody(event);
-                    })
-                    .to("direct:kie")
-                .when(header("sensorType").contains(SensorTypeEnum.BRIGHTNESS.getSensorType()))
-                    .process(exchange -> {
-                        Event<Integer> event = EventFactory.getInstance()
-                                .buildEvent(exchange, BrightnessEvent.class, Integer.class);
-                        exchange.getIn().setBody(event);
-                    })
-                    .to("direct:kie")
-                .when(header("sensorType").contains(SensorTypeEnum.PRESENCE.getSensorType()))
-                    .process(exchange -> {
-                        Event<Boolean> event = EventFactory.getInstance()
-                                .buildEvent(exchange, PresenceEvent.class, Boolean.class);
-                        exchange.getIn().setBody(event);
-                    })
-                    .to("direct:kie")
-                .when(header("sensorType").contains(SensorTypeEnum.BATTERY.getSensorType()))
-                    .process(exchange -> {
-                        Event<Integer> event = EventFactory.getInstance()
-                                .buildEvent(exchange, BatteryEvent.class, Integer.class);
-                        exchange.getIn().setBody(event);
-                    })
-                    .to("direct:kie")
-                .when(header("sensorType").contains(SensorTypeEnum.ANTI_SABOTAGE.getSensorType()))
-                    .process(exchange -> {
-                        Event<Boolean> event = EventFactory.getInstance()
-                                .buildEvent(exchange, AntiSabotageEvent.class, Boolean.class);
-                        exchange.getIn().setBody(event);
-                    })
-                    .to("direct:kie")
-                .otherwise()
-                    .log("Impossible de generer une event a partir de "
-                            + header("CamelHttpUri")
-                            + ". SensorType "
-                            + header("sensorType") + " inconnu");
-
-        from("direct:kie")
-                .process(exchange -> System.out.println(exchange.getIn().getBody()))
+                .setExchangePattern(ExchangePattern.InOnly)
+                .process(exchange -> exchange.getIn().setBody(EventFactory.getInstance().buildEvent(exchange)))
                 .to("kie:homeSession");
 
-        from("kie:homeSession?channel=smartbox")
+        from("kie:homeSession?channel=command")
                 .log("COOL DOWN T°C: " + bodyAs(PresenceEvent.class).toString());
 
         from("kie:homeSession?channel=warning")

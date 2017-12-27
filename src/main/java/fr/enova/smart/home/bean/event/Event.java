@@ -1,4 +1,4 @@
-package fr.enova.smart.home.bean;
+package fr.enova.smart.home.bean.event;
 
 public interface Event<T> {
 
@@ -7,7 +7,7 @@ public interface Event<T> {
     SensorNameEnum getSensorName();
     void setSensorName(SensorNameEnum sensorName);
 
-    RoomEnum getRoom();
+    RoomEnum getRoomName();
     void setRoomName(RoomEnum roomName);
 
     T getValue();

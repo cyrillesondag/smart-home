@@ -1,7 +1,10 @@
 package fr.enova.smart.home.configuration;
 
 import fr.enova.smart.home.camel.KieComponent;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory;
 import org.apache.camel.spring.javaconfig.CamelConfiguration;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.kie.api.KieServices;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
@@ -48,6 +51,26 @@ public class SmartHomeConfiguration extends CamelConfiguration {
 		});
 
 		return kSession;
+	}
+
+	@Bean
+	public CamelContext camelContext() throws Exception {
+		CamelContext context = super.camelContext();
+		MetricsRoutePolicyFactory factory = new MetricsRoutePolicyFactory();
+		factory.setUseJmx(true);
+		factory.setPrettyPrint(true);
+		context.addRoutePolicyFactory(factory);
+		context.setTracing(true);
+		return context;
+	}
+
+	@Bean
+	public Tracer camelTracer() {
+		Tracer tracer = new Tracer();
+		tracer.setTraceExceptions(false);
+		tracer.setTraceInterceptors(true);
+		tracer.setLogName("fr.edf.distribution.linky.poc.camel.api.trace");
+		return tracer;
 	}
 
 }

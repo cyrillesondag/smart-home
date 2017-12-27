@@ -1,4 +1,4 @@
-package fr.enova.smart.home.bean;
+package fr.enova.smart.home.bean.event;
 
 public enum SensorTypeEnum {
 

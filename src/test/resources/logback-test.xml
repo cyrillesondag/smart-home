@@ -8,7 +8,7 @@
     </encoder>
   </appender>
 
-  <logger name="fr.enedis.six.socle.messaging">
+  <logger name="fr.enova.smart.home">
     <level value="DEBUG" />
   </logger>
 

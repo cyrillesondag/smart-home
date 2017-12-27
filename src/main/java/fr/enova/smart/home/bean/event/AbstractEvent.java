@@ -1,10 +1,10 @@
-package fr.enova.smart.home.bean;
+package fr.enova.smart.home.bean.event;
 
 public abstract class AbstractEvent<T> implements Event<T> {
 
     protected long eventTimestamp = System.currentTimeMillis();
     protected SensorNameEnum sensorName;
-    protected RoomEnum roomEnum;
+    protected RoomEnum roomName;
     protected T value;
 
     @Override
@@ -23,13 +23,13 @@ public abstract class AbstractEvent<T> implements Event<T> {
     }
 
     @Override
-    public RoomEnum getRoom() {
-        return roomEnum;
+    public RoomEnum getRoomName() {
+        return roomName;
     }
 
     @Override
     public void setRoomName(RoomEnum roomName) {
-        this.roomEnum = roomName;
+        this.roomName = roomName;
     }
 
     @Override
@@ -50,14 +50,14 @@ public abstract class AbstractEvent<T> implements Event<T> {
         AbstractEvent<?> that = (AbstractEvent<?>) o;
 
         if (sensorName != that.sensorName) return false;
-        if (roomEnum != that.roomEnum) return false;
+        if (roomName != that.roomName) return false;
         return value != null ? value.equals(that.value) : that.value == null;
     }
 
     @Override
     public int hashCode() {
         int result = sensorName != null ? sensorName.hashCode() : 0;
-        result = 31 * result + (roomEnum != null ? roomEnum.hashCode() : 0);
+        result = 31 * result + (roomName != null ? roomName.hashCode() : 0);
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
     }
@@ -67,7 +67,7 @@ public abstract class AbstractEvent<T> implements Event<T> {
         return this.getClass().getSimpleName() + "{" +
                 "eventTimestamp=" + eventTimestamp +
                 ", sensorName=" + sensorName +
-                ", roomEnum=" + roomEnum +
+                ", roomName=" + roomName +
                 ", value=" + value +
                 '}';
     }
