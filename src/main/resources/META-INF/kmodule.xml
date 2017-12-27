@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://jboss.org/kie/6.0.0/kmodule" xsi:schemaLocation="http://jboss.org/kie/6.0.0/kmodule kmodule.xsd">
+	<configuration>
+		<property key="drools.propertySpecific" value="ALWAYS" />
+	</configuration>
+	<kbase name="homeKBase" eventProcessingMode="stream" equalsBehavior="equality" default="true">
+		<ksession name="homeSession" type="stateful" clockType="pseudo" default="true"/>
+	</kbase>
+</kmodule>

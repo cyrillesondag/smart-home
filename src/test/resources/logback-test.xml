@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[TESTS] %d %-5level [%thread] %logger{0}: %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="fr.enedis.six.socle.messaging">
+    <level value="DEBUG" />
+  </logger>
+
+  <root>
+    <level value="INFO" />
+    <appender-ref ref="STDOUT" />
+  </root>
+
+</configuration>
+
+

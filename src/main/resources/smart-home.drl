@@ -1,0 +1,10 @@
+package fr.enova.smart.home;
+
+import fr.enova.smart.home.bean.TemperatureEvent
+
+rule "RG_ASK_TEMPERATURE"
+when
+   $event: TemperatureEvent()
+then
+
+end
