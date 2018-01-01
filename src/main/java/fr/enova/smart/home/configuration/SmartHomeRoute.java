@@ -31,7 +31,7 @@ public class SmartHomeRoute extends RouteBuilder {
                 .port(8888);
 
         rest("/push").description("Jeedom push API")
-                .consumes("application/json").produces("application/json")
+                //.consumes("application/json").produces("application/json")
                 .get("/sensorType/{sensorType}/commandId/{commandId}/humanCommand/{humanCommand}/value/{value}/room/{room}")
                 .responseMessage().code(200).endResponseMessage()
                 .route()

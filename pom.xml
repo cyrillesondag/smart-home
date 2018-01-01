@@ -142,6 +142,13 @@
             <version>${org.drools.version}</version>
         </dependency>
 
+        <!-- Notre servlet container -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </dependency>
+
+
         <!-- testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -153,11 +160,6 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -185,8 +187,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${org.springframework.boot.version}</version>
                 <executions>
                     <execution>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/springboot</outputDirectory>
+                        </configuration>
                         <goals>
                             <goal>repackage</goal>
                         </goals>

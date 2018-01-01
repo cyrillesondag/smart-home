@@ -44,9 +44,9 @@ public class SmartHomeTest {
         rootObject.setState("ok");
         String rootObjectString = objectMapper.writeValueAsString(rootObject);
 
-        server = MockRestServiceServer.createServer(restTemplate.getRestTemplate());
-        server.expect(requestTo("/node"))
-                .andRespond(withSuccess(rootObjectString, MediaType.APPLICATION_JSON));
+//        server = MockRestServiceServer.createServer(restTemplate.getRestTemplate());
+//        server.expect(requestTo("/node"))
+//                .andRespond(withSuccess(rootObjectString, MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -61,9 +61,10 @@ public class SmartHomeTest {
 //                .whenDone(1)
                 .create();
 
-        ResponseEntity<String> response =  restTemplate.getForEntity(BASE_URL + "sensorType/presence/commandId/6/humanCommand/%5Bliving%5D%5Bsensor.living%5D%5Bpresence%5D/value/1/room/living", String.class);
+        ResponseEntity<String> response =  restTemplate.getForEntity(BASE_URL + "sensorType/temperature/commandId/6/humanCommand/%5Bliving%5D%5Bsensor.living%5D%5Bpresence%5D/value/23/room/living", String.class);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo("OK");
+        restTemplate.getForEntity(BASE_URL + "sensorType/temperature/commandId/6/humanCommand/%5Bliving%5D%5Bsensor.living%5D%5Bpresence%5D/value/20/room/living", String.class);
 
         assertThat(notify.matches(1000, TimeUnit.MILLISECONDS)).isTrue();
 

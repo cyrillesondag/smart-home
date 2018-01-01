@@ -1,0 +1,69 @@
+package fr.enova.smart.home;
+
+import fr.enova.smart.home.bean.event.Event
+import fr.enova.smart.home.bean.event.TemperatureEvent
+import fr.enova.smart.home.bean.event.RoomEnum
+import fr.enova.smart.home.bean.command.Command
+import fr.enova.smart.home.bean.command.StopVmcGameAction
+import fr.enova.smart.home.bean.command.LowVmcGameAction
+import fr.enova.smart.home.bean.command.HighVmcGameCmd
+
+
+declare TemperatureEvent
+    @role( event )
+    @timestamp ( eventTimestamp )
+end
+
+declare Command
+    @role( event )
+    @timestamp ( eventTimestamp )
+end
+
+rule "RG_CLEAN_EVENT"
+when
+    $event: Event()
+    $otherEvent: Event( roomName == $event.roomName, sensorName == $event.sensorName, this after $event)
+then
+    retract($event)
+end
+
+
+rule "STOP_VMC_GAME"
+when
+   TemperatureEvent( roomName == RoomEnum.LIVING, value < 20.5 )
+then
+    channels["command"].send( new StopVmcGameAction() );
+end
+
+
+rule "LOW_VMC_GAME"
+when
+   TemperatureEvent(roomName == RoomEnum.LIVING, value >= 20.5, value <= 20.9)
+then
+    channels["command"].send( new LowVmcGameAction() );
+end
+
+
+rule "HIGH_VMC_GAME"
+when
+   TemperatureEvent(roomName == RoomEnum.LIVING, value > 20.9)
+then
+    channels["command"].send( new HighVmcGameCmd() );
+end
+
+
+rule "RETRACT_COMMAND_ALREADY_SENT"
+when
+    $cmd: Command()
+    $newCmd: Command(getClass() == $cmd.getClass(), roomName == $cmd.roomName, sensorName == $cmd.sensorName, this after $cmd)
+then
+    retract($newCmd)
+end
+
+
+rule "SEND_COMMAND"
+when
+    $cmd: Command()
+then
+    channels["command"].send( $cmd );
+end
